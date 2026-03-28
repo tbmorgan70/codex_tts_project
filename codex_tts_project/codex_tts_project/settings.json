@@ -1,0 +1,7 @@
+{
+  "text": "Testing one, two, three. This voice sample should sound natural, steady, and clear across short and long phrases. Today I am checking pacing, tone, articulation, and overall similarity to the reference voice.",
+  "language": "en",
+  "speaker_wav": "voices/tim_reference.WAV",
+  "output_wav": "output/tim_test_xtts.wav",
+  "model_name": "tts_models/multilingual/multi-dataset/xtts_v2"
+}

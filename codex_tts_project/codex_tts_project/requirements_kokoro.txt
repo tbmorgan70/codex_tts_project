@@ -1,0 +1,6 @@
+# Lightweight fallback engine
+kokoro
+soundfile
+misaki[en]
+numpy
+scipy

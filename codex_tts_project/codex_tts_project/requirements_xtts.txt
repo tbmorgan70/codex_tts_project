@@ -1,0 +1,14 @@
+# Install torch first using the official PyTorch command for your CUDA version.
+# Then install the rest with:
+# pip install -r requirements_xtts.txt
+
+coqui-tts>=0.27
+transformers>=4.43.0,<=4.46.2
+soundfile
+librosa
+numpy
+scipy
+pydub
+unidecode
+num2words
+ffmpeg-python

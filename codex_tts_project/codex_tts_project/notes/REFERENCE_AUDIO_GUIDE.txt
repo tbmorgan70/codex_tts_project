@@ -1,0 +1,7 @@
+Reference audio checklist:
+- 6 to 20 seconds
+- clean speech only
+- no background music
+- no heavy echo/reverb
+- steady speaking pace
+- save transcript in notes/
