@@ -1,0 +1,44 @@
+Use this folder as the full project root for a local Windows + NVIDIA text-to-speech setup.
+
+Primary goal:
+Set up a persistent, reproducible local TTS environment using XTTS v2 through coqui-tts.
+
+Requirements:
+- Prefer Python 3.11 only.
+- Create a fresh virtual environment in .venv.
+- Install PyTorch first, using the correct official CUDA wheel for this machine.
+- Then install the project requirements from requirements_xtts.txt.
+- Keep all files, scripts, configs, logs, generated audio, and notes inside this folder only.
+- Do not casually upgrade package versions.
+- Do not switch to another TTS engine unless XTTS fails.
+- If XTTS fails, add a fallback Kokoro script without breaking the XTTS setup.
+- Do not rename the core folders.
+
+Project structure to preserve:
+- README_SETUP.md
+- PROMPT_FOR_CODEX.txt
+- requirements_xtts.txt
+- requirements_kokoro.txt
+- check_gpu.py
+- run_xtts.py
+- settings.example.json
+- voices/
+- notes/
+- input/
+- output/
+
+Tasks:
+1. Verify Python version and create .venv.
+2. Install PyTorch first.
+3. Install requirements_xtts.txt.
+4. Run check_gpu.py.
+5. Copy settings.example.json to settings.json if needed.
+6. Verify that voices/tim_reference.wav exists.
+7. Run run_xtts.py and generate output/tim_test_xtts.wav.
+8. If XTTS install fails due to dependency issues, document the exact error in README_SETUP.md and add a Kokoro fallback script instead of improvising large changes.
+
+Rules:
+- Prefer stability over novelty.
+- Keep a log of every install or dependency change in README_SETUP.md.
+- Ask for no cloud API keys unless explicitly requested.
+- Keep the project fully local by default.

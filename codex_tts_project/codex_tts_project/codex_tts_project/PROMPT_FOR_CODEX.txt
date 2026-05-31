@@ -1,0 +1,23 @@
+Use this folder as the entire project root for a local TTS setup on Windows with NVIDIA GPU.
+
+Goals:
+1. Keep a persistent, reproducible environment.
+2. Use XTTS v2 through coqui-tts as the default engine.
+3. Do not swap package versions casually.
+4. Install PyTorch first, matching the local CUDA wheel.
+5. Keep all edits, scripts, config, and outputs inside this folder.
+6. Generate a clean WAV from voices/tim_reference.wav and save to output/.
+
+Rules:
+- Prefer Python 3.11.
+- Prefer a fresh virtual environment in .venv.
+- Do not use the legacy unmaintained TTS package if coqui-tts works.
+- Keep dependency changes documented inside README_SETUP.md.
+- Add a fallback Kokoro script only if XTTS fails.
+- Do not remove or rename the core folders.
+
+Deliverables:
+- a working local XTTS test
+- clear install notes
+- stable requirements
+- one example generated WAV
