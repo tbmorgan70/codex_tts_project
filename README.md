@@ -1,88 +1,52 @@
-# codex_tts_project
+# Codex TTS Project
 
-## Features
+Local, GPU-assisted voice cloning with Coqui XTTS on Windows.
 
-- Local XTTS voice cloning on Windows
-- Dedicated Python 3.11 virtual environment
-- PyTorch with CUDA GPU support
-- Reference WAV based voice generation
-- Persistent project structure for Codex workflows
-- Documented compatibility fixes for repeatable setup
+**Current workflow version: v0.2.0**
 
-## Project Goal
+## What v0.2.0 adds
 
-Set up a stable, local text-to-speech workflow using **Coqui XTTS** so the project could generate speech from a reference voice sample without relying on a hosted API.
+- Text-file input through `text_file`.
+- Speech-rate control through `speed`.
+- Repeatable generation through an optional `seed`.
+- `focused`, `natural`, and `expressive` delivery presets.
+- Single-file or multi-reference voice input: set `speaker_wav` to an audio file or a folder of reference clips.
 
-## What Was Done
+See [Voice Workflow](docs/VOICE_WORKFLOW.md) for reference preparation and generation guidance, and [CHANGELOG.md](CHANGELOG.md) for version history.
 
-### 1. Fixed the Python environment
+## Quick Start
 
-The first blocker was that the system `python` command pointed to **Inkscape’s bundled Python**, which was not compatible with standard PyTorch wheels. A proper **CPython 3.11** installation was added, and the project was rebuilt around that interpreter.
-
-### 2. Created a clean project environment
-
-A fresh virtual environment was created inside the repo using:
+Run commands from `codex_tts_project/codex_tts_project`.
 
 ```powershell
-py -3.11 -m venv .venv
-.venv\Scripts\activate
+Copy-Item settings.example.json settings.json
+$env:COQUI_TOS_AGREED = "1"
+.\.venv\Scripts\python.exe run_xtts.py
 ```
 
-This ensured the project used a controlled Python environment instead of whatever Windows happened to find first.
+Edit `settings.json` to select the text, voice reference, delivery preset, and output filename.
 
-### 3. Installed core dependencies
+## Example Configuration
 
-The setup included:
+```json
+{
+  "text_file": "input/my_script.txt",
+  "language": "en",
+  "speed": 1.0,
+  "preset": "natural",
+  "seed": 42,
+  "speaker_wav": "voices/my_voice",
+  "output_wav": "output/my_voice_take.wav"
+}
+```
 
-- upgraded `pip`, `setuptools`, and `wheel`
-- installed **PyTorch 2.7.1 + cu118**
-- installed **torchvision** and **torchaudio**
-- installed XTTS dependencies from `requirements_xtts.txt`
-- installed **coqui-tts 0.27.5**
+When `speaker_wav` points to a folder, the runner uses supported files in filename order: WAV, MP3, FLAC, M4A, and OGG.
 
-### 4. Verified runtime support
+## Requirements
 
-The environment was checked to confirm:
+- Windows
+- Python 3.11
+- NVIDIA GPU recommended
+- Coqui XTTS dependencies from `requirements_xtts.txt`
 
-- Python 3.11.9 was active inside the virtual environment
-- the required packages installed correctly
-- GPU support worked on the **RTX 4060**
-- project paths for input and output files were correct
-
-### 5. Completed the XTTS workflow
-
-After adding the reference voice WAV file, the XTTS workflow was tested end to end. A compatibility issue in the local XTTS setup was fixed by updating:
-
-- `run_xtts.py`
-- `requirements_xtts.txt`
-- `settings.json`
-
-The XTTS model was then downloaded and used to generate:
-
-- `tim_test_xtts.wav`
-
-## Result
-
-The repository now contains a working local XTTS setup with:
-
-- a functioning `.venv`
-- compatible Python and package versions
-- GPU-enabled inference
-- a reference voice cloning workflow
-- a successful generated test output
-
-## Stack
-
-- Windows PowerShell
-- Python 3.11.9
-- PyTorch 2.7.1 + cu118
-- Coqui XTTS / `coqui-tts`
-- NVIDIA RTX 4060
-
-## Usage Notes
-
-This repo is intended as a reusable local TTS project. The setup process showed that interpreter selection matters as much as package installation, especially for machine learning tools on Windows. Once the correct Python environment was in place, the rest of the stack could be installed and tested successfully.
-
-## Outcome
-
-This project produced a working, repeatable XTTS voice cloning environment that can now be used for additional testing, prompt variation, batch generation, or future voice-based workflows.
+Use [README_SETUP.md](codex_tts_project/codex_tts_project/README_SETUP.md) for full environment setup.
