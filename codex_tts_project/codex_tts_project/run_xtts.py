@@ -1,3 +1,6 @@
+Exit code: 0
+Wall time: 0.5 seconds
+Output:
 import json
 from pathlib import Path
 
@@ -28,6 +31,7 @@ if not hasattr(hf_pytorch_utils, "isin_mps_friendly"):
     hf_pytorch_utils.isin_mps_friendly = isin_mps_friendly
 
 from TTS.api import TTS
+from prepare_references import SUPPORTED_AUDIO, prepare_file
 
 ROOT = Path(__file__).resolve().parent
 
@@ -53,6 +57,43 @@ PRESETS = {
         "repetition_penalty": 3.0,
     },
 }
+
+
+def audio_files(directory: Path) -> list[Path]:
+    return sorted(
+        path for path in directory.iterdir()
+        if path.is_file() and path.suffix.lower() in SUPPORTED_AUDIO
+    )
+
+
+def prepared_references(source: Path) -> list[Path]:
+    """Prepare new reference audio once, then reuse it until the source changes."""
+    if source.is_dir():
+        if source.name == "prepared":
+            references = audio_files(source)
+            if not references:
+                raise ValueError(f"No supported reference audio found in: {source}")
+            return references
+        sources = audio_files(source)
+        prepared_dir = source / "prepared"
+    else:
+        if not source.is_file():
+            raise ValueError(f"Reference audio does not exist: {source}")
+        sources = [source]
+        prepared_dir = source.parent / "prepared"
+
+    if not sources:
+        raise ValueError(f"No supported reference audio found in: {source}")
+
+    references = []
+    for raw_audio in sources:
+        prepared_audio = prepared_dir / f"{raw_audio.stem}_xtts.wav"
+        if not prepared_audio.exists() or prepared_audio.stat().st_mtime < raw_audio.stat().st_mtime:
+            prepare_file(raw_audio, prepared_audio)
+        references.append(prepared_audio)
+    return references
+
+
 settings_path = ROOT / "settings.json"
 if not settings_path.exists():
     settings_path = ROOT / "settings.example.json"
@@ -69,16 +110,16 @@ else:
 
 language = cfg.get("language", "en")
 speaker_source = ROOT / cfg["speaker_wav"]
-if speaker_source.is_dir():
-    supported_audio = {".wav", ".mp3", ".flac", ".m4a", ".ogg"}
-    speaker_wav = sorted(
-        path for path in speaker_source.iterdir()
-        if path.is_file() and path.suffix.lower() in supported_audio
-    )
+prepare_references = cfg.get("prepare_references", True)
+if prepare_references:
+    speaker_wav = prepared_references(speaker_source)
+else:
+    if speaker_source.is_dir():
+        speaker_wav = audio_files(speaker_source)
+    else:
+        speaker_wav = [speaker_source]
     if not speaker_wav:
         raise ValueError(f"No supported reference audio found in: {speaker_source}")
-else:
-    speaker_wav = [speaker_source]
 
 output_wav = ROOT / cfg["output_wav"]
 model_name = cfg.get("model_name", "tts_models/multilingual/multi-dataset/xtts_v2")
@@ -104,7 +145,8 @@ output_wav.parent.mkdir(parents=True, exist_ok=True)
 print(f"Loading model: {model_name}")
 tts = TTS(model_name=model_name)
 
-print(f"Generating audio from {len(speaker_wav)} reference file(s): {speaker_wav}")
+reference_kind = "prepared" if prepare_references else "raw"
+print(f"Generating audio from {len(speaker_wav)} {reference_kind} reference file(s): {speaker_wav}")
 print(f"Preset: {preset_name}; seed: {seed}; settings: {generation}")
 tts.tts_to_file(
     text=text,
