@@ -2,7 +2,12 @@
 
 Local, GPU-assisted voice cloning with Coqui XTTS on Windows.
 
-**Current workflow version: v0.2.0**
+**Current workflow version: v0.2.1**
+
+## What v0.2.1 adds
+
+- Automatic, non-destructive reference preparation by default.
+- Prepared reference audio is refreshed only when its raw source changes.
 
 ## What v0.2.0 adds
 
@@ -35,6 +40,7 @@ Edit `settings.json` to select the text, voice reference, delivery preset, and o
   "speed": 1.0,
   "preset": "natural",
   "seed": 42,
+  "prepare_references": true,
   "speaker_wav": "voices/my_voice",
   "output_wav": "output/my_voice_take.wav"
 }
