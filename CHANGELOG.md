@@ -2,6 +2,24 @@
 
 All notable workflow changes are documented here.
 
+## v0.2.1 - 2026-08-04
+
+### Added
+
+- Automatic reference preparation for file or folder voice inputs, enabled by default through `prepare_references`.
+- `prepare_references.py`, which creates non-destructive 24 kHz mono PCM WAV copies in a `prepared/` folder.
+
+### Preparation
+
+- Trims leading and trailing silence.
+- Applies a gentle 70 Hz high-pass filter.
+- Peak-normalizes to -1 dBFS.
+- Reuses prepared copies until their source recordings are newer.
+
+### Validated
+
+- Generated a natural take from raw `new-woman2` folder input and confirmed XTTS used its three prepared WAV references.
+
 ## v0.2.0 - 2026-08-01
 
 ### Added
