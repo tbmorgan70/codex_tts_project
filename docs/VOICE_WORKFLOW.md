@@ -17,6 +17,14 @@ The runner accepts a single audio path or a folder. Folder input uses supported 
 
 Do not heavily denoise, gate, compress, or EQ references. Light repair is appropriate only when it removes a clear defect such as low-frequency rumble or persistent background noise.
 
+## Automatic Preparation
+
+`prepare_references` defaults to `true`. When enabled, the runner creates non-destructive prepared copies in a sibling `prepared/` folder, then sends those copies to XTTS.
+
+Each prepared copy is 24 kHz mono PCM WAV with leading/trailing silence trimmed, a gentle 70 Hz high-pass filter, and -1 dBFS peak normalization. An existing prepared copy is reused until its raw source file changes.
+
+Set `"prepare_references": false` only to intentionally synthesize from raw source files. You can also point `speaker_wav` directly to a `prepared` folder to use it as-is.
+
 ## Configuration
 
 Start from `settings.example.json`.
@@ -28,6 +36,7 @@ Start from `settings.example.json`.
   "speed": 1.0,
   "preset": "natural",
   "seed": 42,
+  "prepare_references": true,
   "speaker_wav": "voices/my_voice",
   "output_wav": "output/my_voice_take.wav"
 }
@@ -59,11 +68,12 @@ The four sampling values may be supplied directly in `settings.json` to override
 
 ## Practical Iteration
 
-1. Make a natural-speed `natural` baseline.
-2. Render `focused` and `expressive` with the same seed.
-3. Choose the closest take before changing more than one thing.
-4. Adjust speed only after selecting a delivery style.
-5. Keep output filenames descriptive, including voice, text, preset, speed, and seed.
+1. Place raw clips in a new folder under `voices/`.
+2. Make a natural-speed `natural` baseline; preparation runs automatically.
+3. Render `focused` and `expressive` with the same seed.
+4. Choose the closest take before changing more than one thing.
+5. Adjust speed only after selecting a delivery style.
+6. Keep output filenames descriptive, including voice, text, preset, speed, and seed.
 
 ## Run
 
@@ -72,4 +82,4 @@ $env:COQUI_TOS_AGREED = "1"
 .\.venv\Scripts\python.exe run_xtts.py
 ```
 
-The runner prints the chosen reference files and generation settings before it synthesizes.
+The runner prints the selected prepared or raw reference files and generation settings before it synthesizes.
